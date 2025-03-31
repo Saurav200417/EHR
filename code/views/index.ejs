@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text-Translation</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <div class="container">
+        <nav>
+            <a href="#home" class="logo">EHR</a>
+            <div class="nav-links">
+                <a href="#home">Home</a>
+                <a href="#about">About</a>
+                <a href="#features">Features</a>
+            </div>
+            <div class="nav-links">
+                <div class="dropdown">
+                    <a href="#">Account &#9662;</a>
+                    <div class="dropdown-content">
+                        <a class="sign-up" href="/auth">Sign-in</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Hero Section -->
+    <div class="container">
+        <div class="hero-section" id="home">
+            <div class="hero-content">
+                <h1>Revolutionize Healthcare Records with Blockchain</h1>
+                <p class="hero-description">
+                    Secure and decentralized electronic health records powered by blockchain. Experience enhanced
+                    patient data integrity, privacy, and transparency through our innovative system.
+                </p>
+                <a href="/auth" class="cta-button">Get Started</a>
+
+                <div class="testimonial">
+                    <div class="testimonial-image">
+                        <img src="/img/hero.webp" alt="User testimonial">
+                    </div>
+                    <div class="testimonial-content">
+                        <p class="testimonial-text">
+                            <span class="quote-mark">"</span>
+                            Blockchain-EHR revolutionizes healthcare by ensuring secure, immutable, and transparent
+                            records that empower patient care.
+                            <span class="quote-mark">"</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="/img/hero.webp" alt="Blockchain-based healthcare records interface">
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <section id="features" class="features-flip">
+        <div class="container">
+            <h2>Our Features</h2>
+            <div class="flip-cards">
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <h3>Immutable Record Keeping</h3>
+                            <p>Hover to learn more</p>
+                        </div>
+                        <div class="flip-card-back">
+                            <p>Blockchain-powered records that ensure data integrity and prevent unauthorized
+                                alterations</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <h3>Interoperable Systems</h3>
+                            <p>Hover to learn more</p>
+                        </div>
+                        <div class="flip-card-back">
+                            <p>Seamless integration across healthcare platforms to facilitate data exchange and
+                                collaboration</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <h3>Regulatory Compliance</h3>
+                            <p>Hover to learn more</p>
+                        </div>
+                        <div class="flip-card-back">
+                            <p>Adheres to healthcare regulations and standards ensuring secure and compliant data
+                                management</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <h3>Real-Time Access</h3>
+                            <p>Hover to learn more</p>
+                        </div>
+                        <div class="flip-card-back">
+                            <p>Instant access to patient records across multiple systems with robust security protocols
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <div class="about-section" id="about">
+        <div class="container">
+            <h2>About Us</h2>
+            <p>
+                Blockchain-EHR is committed to revolutionizing healthcare data management through secure, decentralized
+                blockchain technology. Our system delivers immutable, transparent, and efficient electronic health
+                records that empower healthcare providers and safeguard patient information.
+            </p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h3>Blockchain-EHR</h3>
+                    <p>Empowering Healthcare with Blockchain</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Product</h4>
+                        <ul>
+                            <li><a href="#features">Features</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Company</h4>
+                        <ul>
+                            <li><a href="#about">About</a></li>
+                            <li><a href="#">Contact</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Blockchain-EHR. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    <!-- index.ejs: Add this at the bottom before </body> -->
+    <script>
+<% if (typeof targetSection !== 'undefined') { %>
+            window.onload = function() {
+                var section = document.getElementById("<%= targetSection %>");
+                if (section) {
+                    section.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+<% } %>
+    </script>
+
+    <script src="/js/main.js"></script>
+</body>
+
+</html>

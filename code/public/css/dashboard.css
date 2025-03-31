@@ -1,0 +1,161 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #007bff;
+    padding: 15px 30px;
+    color: white;
+}
+
+.navbar .brand {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.navbar .nav-items {
+    display: flex;
+    gap: 15px;
+}
+
+.navbar .nav-link {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    transition: 0.3s ease;
+}
+
+.navbar .nav-link:hover {
+    text-decoration: underline;
+}
+
+.navbar .logout {
+    background-color: white;
+    color: #007bff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: 0.3s ease;
+}
+
+.navbar .logout:hover {
+    background-color: #f4f4f9;
+}
+
+/* Container */
+.container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Welcome Text */
+h1 {
+    font-size: 28px;
+    color: #333;
+}
+
+/* Form Styling */
+.translation-card,
+.context-card {
+    background-color: #ffffff;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    color: #007bff;
+}
+
+/* Input Fields */
+.form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.form-group label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+textarea,
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    outline: none;
+}
+
+textarea {
+    resize: vertical;
+}
+
+/* Button */
+.translate-btn {
+    width: 100%;
+    padding: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.translate-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Results Section */
+.result-section,
+.context-card {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.result-box {
+    padding: 15px;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    min-height: 50px;
+    font-size: 18px;
+    color: #333;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        width: 90%;
+        padding: 15px;
+    }
+
+    .navbar {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .navbar .nav-items {
+        flex-direction: column;
+        gap: 10px;
+    }
+}

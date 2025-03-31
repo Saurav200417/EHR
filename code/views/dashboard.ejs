@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Translation Dashboard</title>
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="brand">Text Translator</div>
+        <div class="nav-items">
+            <a href="/dashboard" class="nav-link">Dashboard</a>
+            <a href="/logout" class="nav-link logout">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- User Welcome Message -->
+        <h1>Welcome, <%= username %>! 👋</h1>
+
+        <!-- Translation Section -->
+        <div class="translation-card">
+            <h2>Text Translation</h2>
+            <form id="translationForm">
+                <div class="form-group">
+                    <label for="sourceText">Enter Text:</label>
+                    <textarea id="sourceText" rows="4" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="targetLanguage">Target Language:</label>
+                    <select id="targetLanguage">
+                        <option value="ma">Marathi</option>
+                        <option value="hi">Hindi</option>
+                        <option value="ta">Tamil</option>
+                        <option value="te">Telugu</option>
+                        <option value="ml">Malayalam</option>
+                        <option value="bn">Bengali</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="translate-btn">Translate</button>
+            </form>
+
+            <div class="result-section">
+                <h3>Translated Text:</h3>
+                <div id="translatedResult" class="result-box"></div>
+            </div>
+        </div>
+
+        <!-- Contextual Information Section -->
+        <div class="context-card">
+            <h2>Contextual Information</h2>
+            <div id="contextResult" class="result-box">
+                <!-- Extracted context will appear here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Include Axios & Dashboard Script -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="/js/dashboard.js"></script>
+</body>
+
+</html>

@@ -91,6 +91,22 @@ app.get("/auth", (req, res) => {
     res.render("authPage")
 });
 
+// app.get('/dashboard', verifyToken, async (req, res) => {
+//     try {
+//         // Fetch the logged-in user from the database
+//         const user = await User.findById(req.user.id);
+
+//         if (!user) {
+//             return res.redirect('/auth'); // Redirect if user not found
+//         }
+
+//         // Pass the username to the EJS template
+//         res.render("dashboard", { username: user.username });
+//     } catch (err) {
+//         console.error("Error fetching user:", err);
+//         res.redirect('/auth');
+//     }
+// });
 app.get('/dashboard', verifyToken, async (req, res) => {
     try {
         // Fetch the logged-in user from the database
@@ -100,8 +116,14 @@ app.get('/dashboard', verifyToken, async (req, res) => {
             return res.redirect('/auth'); // Redirect if user not found
         }
 
-        // Pass the username to the EJS template
-        res.render("dashboard", { username: user.username });
+        // Determine if the user is an admin
+        const isAdmin = user.role === 'admin'; // Assuming 'role' exists in your User schema
+
+        // Pass username and isAdmin to the EJS template
+        res.render("dashboard", {
+            username: user.username,
+            isAdmin: isAdmin
+        });
     } catch (err) {
         console.error("Error fetching user:", err);
         res.redirect('/auth');

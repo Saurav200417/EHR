@@ -4,66 +4,400 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Translation Dashboard</title>
+    <title>FlowLearn Dashboard</title>
     <link rel="stylesheet" href="/css/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.8.0/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 </head>
 
 <body>
-    <!-- Navigation Bar -->
-    <nav class="navbar">
-        <div class="brand">Text Translator</div>
-        <div class="nav-items">
-            <a href="/dashboard" class="nav-link">Dashboard</a>
-            <a href="/logout" class="nav-link logout">Logout</a>
-        </div>
-    </nav>
-
-    <div class="container">
-        <!-- User Welcome Message -->
-        <h1>Welcome, <%= username %>! 👋</h1>
-
-        <!-- Translation Section -->
-        <div class="translation-card">
-            <h2>Text Translation</h2>
-            <form id="translationForm">
-                <div class="form-group">
-                    <label for="sourceText">Enter Text:</label>
-                    <textarea id="sourceText" rows="4" required></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="targetLanguage">Target Language:</label>
-                    <select id="targetLanguage">
-                        <option value="ma">Marathi</option>
-                        <option value="hi">Hindi</option>
-                        <option value="ta">Tamil</option>
-                        <option value="te">Telugu</option>
-                        <option value="ml">Malayalam</option>
-                        <option value="bn">Bengali</option>
-                    </select>
-                </div>
-
-                <button type="submit" class="translate-btn">Translate</button>
-            </form>
-
-            <div class="result-section">
-                <h3>Translated Text:</h3>
-                <div id="translatedResult" class="result-box"></div>
+    <header>
+        <nav>
+            <div class="logo">FlowLearn</div>
+            <div class="user-info">
+                <span>Welcome, <%= username %></span>
+                <a href="/logout" class="logout-btn">Logout</a>
             </div>
-        </div>
+        </nav>
+    </header>
 
-        <!-- Contextual Information Section -->
-        <div class="context-card">
-            <h2>Contextual Information</h2>
-            <div id="contextResult" class="result-box">
-                <!-- Extracted context will appear here -->
+    <main class="dashboard-container">
+        <% if (success && success.length> 0) { %>
+            <div class="alert alert-success">
+                <%= success %>
             </div>
-        </div>
-    </div>
+            <% } %>
+                <% if (error && error.length> 0) { %>
+                    <div class="alert alert-error">
+                        <%= error %>
+                    </div>
+                    <% } %>
 
-    <!-- Include Axios & Dashboard Script -->
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="/js/dashboard.js"></script>
+                        <!-- Web3 Connection Status -->
+                        <section class="wallet-section">
+                            <h2>Blockchain Connection</h2>
+                            <div id="wallet-status">
+                                <p>Status: <span id="connection-status">Not Connected</span></p>
+                                <p>Account: <span id="account-address">-</span></p>
+                                <button id="connect-wallet" class="btn btn-primary">Connect Wallet</button>
+                            </div>
+                        </section>
+
+                        <!-- File Upload Section -->
+                        <section class="upload-section">
+                            <h2>Upload New File</h2>
+                            <div class="upload-form">
+                                <div class="form-group">
+                                    <label for="file-input">Select File:</label>
+                                    <input type="file" id="file-input">
+                                </div>
+                                <div class="form-group">
+                                    <label for="file-name">File Name:</label>
+                                    <input type="text" id="file-name" placeholder="Enter file name">
+                                </div>
+                                <div class="upload-status">
+                                    <p>IPFS CID: <span id="file-cid">-</span></p>
+                                </div>
+                                <button id="upload-file" class="btn btn-primary">Upload to IPFS</button>
+                                <button id="register-file" class="btn btn-success" disabled>Register on
+                                    Blockchain</button>
+                            </div>
+                        </section>
+
+                        <!-- My Files Section -->
+                        <section class="my-files-section">
+                            <h2>My Files</h2>
+                            <div class="files-container">
+                                <table id="my-files-table">
+                                    <thead>
+                                        <tr>
+                                            <th>File Name</th>
+                                            <th>CID</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="my-files-list">
+                                        <!-- Files will be loaded here dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+
+                        <!-- Access Control Section -->
+                        <section class="access-control-section">
+                            <h2>Access Management</h2>
+                            <div class="access-control-form">
+                                <div class="form-group">
+                                    <label for="file-select">Select File:</label>
+                                    <select id="file-select">
+                                        <option value="">-- Select a file --</option>
+                                        <!-- Files will be loaded here dynamically -->
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="user-address">User Address:</label>
+                                    <input type="text" id="user-address" placeholder="Enter Ethereum address">
+                                </div>
+                                <div class="button-group">
+                                    <button id="grant-access" class="btn btn-primary">Grant Access</button>
+                                    <button id="revoke-access" class="btn btn-danger">Revoke Access</button>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Admin Section (conditionally rendered) -->
+                        <% if (isAdmin) { %>
+                            <section class="admin-section">
+                                <h2>Admin Panel</h2>
+                                <div class="admin-controls">
+                                    <h3>All System Files</h3>
+                                    <button id="load-all-files" class="btn btn-info">Load All Files</button>
+                                    <table id="all-files-table">
+                                        <thead>
+                                            <tr>
+                                                <th>File Name</th>
+                                                <th>CID</th>
+                                                <th>Owner</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="all-files-list">
+                                            <!-- Files will be loaded here dynamically -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </section>
+                            <% } %>
+    </main>
+
+    <script>
+        // Contract ABI (this would be generated from your compiled contract)
+        const contractABI = [
+            // Add contract ABI here
+        ];
+
+        // Contract address (this would be the deployed contract address)
+        const contractAddress = "0x..."; // Replace with actual address
+
+        // Web3 instance and contract variables
+        let web3, contract, accounts;
+
+        // DOM Elements
+        const connectButton = document.getElementById('connect-wallet');
+        const uploadButton = document.getElementById('upload-file');
+        const registerButton = document.getElementById('register-file');
+        const grantButton = document.getElementById('grant-access');
+        const revokeButton = document.getElementById('revoke-access');
+        const loadAllButton = document.getElementById('load-all-files');
+
+        // Connect wallet function
+        async function connectWallet() {
+            try {
+                // Check if MetaMask is installed
+                if (window.ethereum) {
+                    web3 = new Web3(window.ethereum);
+                    // Request account access
+                    accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    document.getElementById('connection-status').textContent = 'Connected';
+                    document.getElementById('account-address').textContent = accounts[0];
+
+                    // Initialize contract
+                    contract = new web3.eth.Contract(contractABI, contractAddress);
+
+                    // Load user's files
+                    loadUserFiles();
+                    populateFileSelect();
+                } else {
+                    alert('Please install MetaMask to use this feature');
+                }
+            } catch (error) {
+                console.error('Error connecting to wallet:', error);
+                document.getElementById('connection-status').textContent = 'Connection Failed';
+            }
+        }
+
+        // IPFS upload function (using ipfs-http-client or other service)
+        async function uploadToIPFS() {
+            const fileInput = document.getElementById('file-input');
+            if (!fileInput.files[0]) {
+                alert('Please select a file');
+                return;
+            }
+
+            // Here you would use an IPFS client library or service
+            // For demo purposes, we'll simulate this with a timeout
+            uploadButton.textContent = 'Uploading...';
+
+            setTimeout(() => {
+                // Simulate IPFS CID generation
+                const fakeCID = 'QmX' + Math.random().toString(36).substring(2, 15);
+                document.getElementById('file-cid').textContent = fakeCID;
+                uploadButton.textContent = 'Upload to IPFS';
+                registerButton.disabled = false;
+            }, 1500);
+        }
+
+        // Register file on blockchain
+        async function registerFileOnBlockchain() {
+            const fileName = document.getElementById('file-name').value;
+            const cid = document.getElementById('file-cid').textContent;
+
+            if (!fileName || cid === '-') {
+                alert('Please enter a file name and upload to IPFS first');
+                return;
+            }
+
+            try {
+                registerButton.textContent = 'Registering...';
+                // Call contract method
+                await contract.methods.addFile(fileName, cid).send({
+                    from: accounts[0]
+                });
+
+                alert('File registered successfully!');
+                registerButton.textContent = 'Register on Blockchain';
+                registerButton.disabled = true;
+
+                // Reset form and reload files
+                document.getElementById('file-input').value = '';
+                document.getElementById('file-name').value = '';
+                document.getElementById('file-cid').textContent = '-';
+
+                // Reload files
+                loadUserFiles();
+                populateFileSelect();
+            } catch (error) {
+                console.error('Error registering file:', error);
+                alert('Failed to register file on blockchain');
+                registerButton.textContent = 'Register on Blockchain';
+            }
+        }
+
+        // Load user's files
+        async function loadUserFiles() {
+            try {
+                if (!contract) return;
+
+                const fileNames = await contract.methods.getFileNames().call({
+                    from: accounts[0]
+                });
+
+                const myFilesList = document.getElementById('my-files-list');
+                myFilesList.innerHTML = '';
+
+                for (const fileName of fileNames) {
+                    const cid = await contract.methods.getFileCID(fileName).call({
+                        from: accounts[0]
+                    });
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${fileName}</td>
+                        <td>${cid}</td>
+                        <td>
+                            <button class="btn btn-sm btn-info view-file" data-cid="${cid}">View</button>
+                        </td>
+                    `;
+                    myFilesList.appendChild(row);
+                }
+
+                // Add event listeners to view buttons
+                document.querySelectorAll('.view-file').forEach(button => {
+                    button.addEventListener('click', () => {
+                        const cid = button.getAttribute('data-cid');
+                        // Open IPFS gateway URL in new tab
+                        window.open(`https://ipfs.io/ipfs/${cid}`, '_blank');
+                    });
+                });
+            } catch (error) {
+                console.error('Error loading files:', error);
+            }
+        }
+
+        // Populate file select dropdown
+        async function populateFileSelect() {
+            try {
+                if (!contract) return;
+
+                const fileNames = await contract.methods.getFileNames().call({
+                    from: accounts[0]
+                });
+
+                const fileSelect = document.getElementById('file-select');
+                // Keep the first option and clear the rest
+                fileSelect.innerHTML = '<option value="">-- Select a file --</option>';
+
+                for (const fileName of fileNames) {
+                    const option = document.createElement('option');
+                    option.value = fileName;
+                    option.textContent = fileName;
+                    fileSelect.appendChild(option);
+                }
+            } catch (error) {
+                console.error('Error populating file select:', error);
+            }
+        }
+
+        // Grant access to file
+        async function grantFileAccess() {
+            const fileName = document.getElementById('file-select').value;
+            const userAddress = document.getElementById('user-address').value;
+
+            if (!fileName || !userAddress) {
+                alert('Please select a file and enter a user address');
+                return;
+            }
+
+            try {
+                await contract.methods.grantAccess(userAddress, fileName).send({
+                    from: accounts[0]
+                });
+
+                alert(`Access granted to ${userAddress} for file: ${fileName}`);
+            } catch (error) {
+                console.error('Error granting access:', error);
+                alert('Failed to grant access. Make sure you are the file owner.');
+            }
+        }
+
+        // Revoke access to file
+        async function revokeFileAccess() {
+            const fileName = document.getElementById('file-select').value;
+            const userAddress = document.getElementById('user-address').value;
+
+            if (!fileName || !userAddress) {
+                alert('Please select a file and enter a user address');
+                return;
+            }
+
+            try {
+                await contract.methods.revokeAccess(userAddress, fileName).send({
+                    from: accounts[0]
+                });
+
+                alert(`Access revoked for ${userAddress} to file: ${fileName}`);
+            } catch (error) {
+                console.error('Error revoking access:', error);
+                alert('Failed to revoke access. Make sure you are the file owner.');
+            }
+        }
+
+        // Load all files (admin only)
+        async function loadAllFiles() {
+            try {
+                if (!contract) return;
+
+                const fileInfo = await contract.methods.getAllFileCIDs().call({
+                    from: accounts[0]
+                });
+
+                const allFilesList = document.getElementById('all-files-list');
+                allFilesList.innerHTML = '';
+
+                for (const info of fileInfo) {
+                    // Parse the info string "fileName : cid"
+                    const parts = info.split(' : ');
+                    if (parts.length === 2) {
+                        const fileName = parts[0];
+                        const cid = parts[1];
+
+                        // Get file admin
+                        const fileAdmin = await contract.methods.getFileAdmin(fileName).call();
+
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${fileName}</td>
+                            <td>${cid}</td>
+                            <td>${fileAdmin}</td>
+                        `;
+                        allFilesList.appendChild(row);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading all files:', error);
+                alert('Failed to load all files. Admin access required.');
+            }
+        }
+
+        // Event listeners
+        connectButton.addEventListener('click', connectWallet);
+        uploadButton.addEventListener('click', uploadToIPFS);
+        registerButton.addEventListener('click', registerFileOnBlockchain);
+        grantButton.addEventListener('click', grantFileAccess);
+        revokeButton.addEventListener('click', revokeFileAccess);
+
+        // Admin button (conditionally)
+        if (loadAllButton) {
+            loadAllButton.addEventListener('click', loadAllFiles);
+        }
+
+        // Initialize wallet connection check
+        window.addEventListener('load', async () => {
+            // Check if already connected
+            if (window.ethereum && window.ethereum.selectedAddress) {
+                connectWallet();
+            }
+        });
+    </script>
 </body>
 
 </html>

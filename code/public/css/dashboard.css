@@ -1,161 +1,345 @@
-/* General Styles */
-body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f4f4f9;
-    margin: 0;
-    padding: 0;
+/* Base Styles */
+:root {
+    --primary-color: #3498db;
+    --primary-dark: #2980b9;
+    --secondary-color: #2ecc71;
+    --secondary-dark: #27ae60;
+    --danger-color: #e74c3c;
+    --danger-dark: #c0392b;
+    --info-color: #f39c12;
+    --info-dark: #e67e22;
+    --light-bg: #ecf0f1;
+    --dark-text: #34495e;
+    --light-text: #ffffff;
+    --border-color: #bdc3c7;
+    --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Navbar */
-.navbar {
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--light-bg);
+    color: var(--dark-text);
+    line-height: 1.6;
+}
+
+/* Header */
+header {
+    background-color: #fff;
+    box-shadow: var(--shadow);
+    padding: 1rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #007bff;
-    padding: 15px 30px;
-    color: white;
 }
 
-.navbar .brand {
-    font-size: 24px;
+.logo {
+    font-size: 1.5rem;
     font-weight: bold;
+    color: var(--primary-color);
 }
 
-.navbar .nav-items {
+.user-info {
     display: flex;
-    gap: 15px;
+    align-items: center;
+    gap: 1rem;
 }
 
-.navbar .nav-link {
+.logout-btn {
+    background-color: var(--danger-color);
     color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
     text-decoration: none;
-    font-size: 18px;
-    transition: 0.3s ease;
+    transition: background-color 0.3s;
 }
 
-.navbar .nav-link:hover {
-    text-decoration: underline;
+.logout-btn:hover {
+    background-color: var(--danger-dark);
 }
 
-.navbar .logout {
-    background-color: white;
-    color: #007bff;
-    padding: 5px 10px;
-    border-radius: 5px;
-    transition: 0.3s ease;
+/* Main Container */
+.dashboard-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
 }
 
-.navbar .logout:hover {
-    background-color: #f4f4f9;
+/* Alerts */
+.alert {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+    font-weight: 500;
 }
 
-/* Container */
-.container {
-    max-width: 800px;
-    margin: 40px auto;
-    padding: 20px;
-    background-color: white;
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Sections */
+section {
+    background-color: #fff;
     border-radius: 8px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
 }
 
-/* Welcome Text */
-h1 {
-    font-size: 28px;
-    color: #333;
+section h2 {
+    margin-bottom: 1.5rem;
+    color: var(--dark-text);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
 }
 
-/* Form Styling */
-.translation-card,
-.context-card {
-    background-color: #ffffff;
-    padding: 20px;
-    margin-top: 20px;
-    border-radius: 8px;
-    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+section h3 {
+    margin: 1rem 0;
+    color: var(--dark-text);
 }
 
-h2 {
-    color: #007bff;
-}
-
-/* Input Fields */
+/* Forms */
 .form-group {
-    margin-bottom: 15px;
-    text-align: left;
+    margin-bottom: 1rem;
 }
 
-.form-group label {
-    font-weight: bold;
+label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
 }
 
-textarea,
+input[type="text"],
+input[type="file"],
 select {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-    outline: none;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1rem;
 }
 
-textarea {
-    resize: vertical;
+input[type="file"] {
+    padding: 0.5rem 0;
 }
 
-/* Button */
-.translate-btn {
-    width: 100%;
-    padding: 10px;
-    font-size: 18px;
-    font-weight: bold;
-    color: white;
-    background-color: #007bff;
-    border: none;
-    border-radius: 5px;
+select {
     cursor: pointer;
-    transition: 0.3s ease;
 }
 
-.translate-btn:hover {
-    background-color: #0056b3;
+/* Buttons */
+.btn {
+    padding: 0.75rem 1.25rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
 }
 
-/* Results Section */
-.result-section,
-.context-card {
-    margin-top: 20px;
-    text-align: center;
+.btn:hover {
+    transform: translateY(-2px);
 }
 
-.result-box {
-    padding: 15px;
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: var(--light-text);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+}
+
+.btn-success {
+    background-color: var(--secondary-color);
+    color: var(--light-text);
+}
+
+.btn-success:hover {
+    background-color: var(--secondary-dark);
+}
+
+.btn-danger {
+    background-color: var(--danger-color);
+    color: var(--light-text);
+}
+
+.btn-danger:hover {
+    background-color: var(--danger-dark);
+}
+
+.btn-info {
+    background-color: var(--info-color);
+    color: var(--light-text);
+}
+
+.btn-info:hover {
+    background-color: var(--info-dark);
+}
+
+.btn-sm {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.875rem;
+}
+
+.btn:disabled {
+    background-color: #95a5a6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Button Group */
+.button-group {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+/* Wallet Section */
+.wallet-section {
+    background-color: #fff;
+    border-left: 4px solid var(--primary-color);
+}
+
+#wallet-status {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+#wallet-status p {
+    margin-right: 1rem;
+}
+
+#connection-status,
+#account-address {
+    font-weight: 500;
+}
+
+/* Upload Section */
+.upload-section {
+    border-left: 4px solid var(--secondary-color);
+}
+
+.upload-status {
+    margin: 1rem 0;
+    padding: 0.75rem;
+    background-color: var(--light-bg);
+    border-radius: 4px;
+}
+
+#file-cid {
+    font-family: monospace;
+    font-weight: 500;
+}
+
+/* Files Section */
+.my-files-section {
+    border-left: 4px solid var(--info-color);
+}
+
+.files-container {
+    overflow-x: auto;
+}
+
+/* Access Control Section */
+.access-control-section {
+    border-left: 4px solid var(--primary-dark);
+}
+
+/* Admin Section */
+.admin-section {
+    border-left: 4px solid var(--danger-color);
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+table th,
+table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+table th {
+    background-color: var(--light-bg);
+    font-weight: 600;
+}
+
+table tr:hover {
     background-color: #f8f9fa;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    min-height: 50px;
-    font-size: 18px;
-    color: #333;
 }
 
-/* Responsive Design */
+/* Responsive */
 @media (max-width: 768px) {
-    .container {
-        width: 90%;
-        padding: 15px;
+    .button-group {
+        flex-direction: column;
     }
 
-    .navbar {
+    #wallet-status {
         flex-direction: column;
-        align-items: center;
-        text-align: center;
+        align-items: flex-start;
     }
 
-    .navbar .nav-items {
-        flex-direction: column;
-        gap: 10px;
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
     }
+}
+
+/* Loading States */
+.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* Ethereum Address Truncation */
+.eth-address {
+    font-family: monospace;
+    white-space: nowrap;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* File Link Hover */
+.view-file {
+    transition: all 0.3s ease;
+}
+
+.view-file:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }

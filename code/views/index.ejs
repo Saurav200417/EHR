@@ -166,16 +166,7 @@
         </div>
     </footer>
     <!-- index.ejs: Add this at the bottom before </body> -->
-    <script>
-<% if (typeof targetSection !== 'undefined') { %>
-            window.onload = function() {
-                var section = document.getElementById("<%= targetSection %>");
-                if (section) {
-                    section.scrollIntoView({ behavior: 'smooth' });
-                }
-            }
-<% } %>
-    </script>
+
 
     <script src="/js/main.js"></script>
 </body>

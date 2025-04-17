@@ -13,6 +13,8 @@ const flash = require('connect-flash');
 const db = "mongodb://127.0.0.1:27017/FlowLearn"
 const port = process.env.PORT || 3000;
 
+
+
 // mongoose connection
 mongoose.connect(db)
     .then(() => {
@@ -21,6 +23,10 @@ mongoose.connect(db)
     .catch((err) => {
         console.error('Error connecting to MongoDB:', err);
     });
+
+
+
+
 
 
 // Set up EJS as the view engine
@@ -189,6 +195,58 @@ app.post('/login', async (req, res) => {
         console.log(err);
     }
 });
+
+
+
+const ethUtil = require('ethereumjs-util');
+const sigUtil = require('@metamask/eth-sig-util');
+
+// Temporary nonce store
+const nonces = {};
+
+// 1. Send a message to sign
+app.post('/auth/message', (req, res) => {
+    const { address } = req.body;
+    if (!address) return res.status(400).send('Wallet address missing');
+
+    const nonce = `Sign this message to login: ${Math.floor(Math.random() * 1000000)}`;
+    nonces[address] = nonce;
+    res.json({ message: nonce });
+});
+
+// 2. Verify signed message
+app.post('/auth/verify', async (req, res) => {
+    const { address, signature } = req.body;
+    const originalMessage = nonces[address];
+
+    if (!originalMessage) return res.status(400).send('No message to verify');
+
+    const msgBufferHex = ethUtil.bufferToHex(Buffer.from(originalMessage, 'utf8'));
+    const recoveredAddress = sigUtil.recoverPersonalSignature({
+        data: msgBufferHex,
+        signature: signature,
+    });
+
+    if (recoveredAddress.toLowerCase() === address.toLowerCase()) {
+        let user = await User.findOne({ walletAddress: address });
+
+        if (!user) {
+            user = new User({
+                username: address,
+                email: address + '@walletuser.com',
+                password: bcrypt.hashSync('dummy-password', 10),
+                walletAddress: address
+            });
+            await user.save();
+        }
+
+        const token = generateToken(user);
+        res.cookie('token', token, { httpOnly: true }).status(200).send('Logged in');
+    } else {
+        return res.status(401).send('Invalid signature');
+    }
+});
+
 
 
 

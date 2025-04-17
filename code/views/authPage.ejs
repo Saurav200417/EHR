@@ -41,7 +41,7 @@
                             <!-- Sign In Form -->
                             <div class="form sign-in">
                                 <h2 class="mainHeader">Sign In</h2>
-                                <form action="/login" method="POST">
+                                <form id="signInForm" action="/login" method="POST">
                                     <div class="form-group">
                                         <input type="email" id="signInEmail" name="email" required>
                                         <label for="signInEmail">Email</label>
@@ -91,8 +91,99 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Sliding Overlay -->
+                  
+                    
+                    
+  
+
+<script>
+    document.getElementById('metamaskLogin').addEventListener('click', async () => {
+        if (typeof window.ethereum === 'undefined') {
+            alert('MetaMask is not installed!');
+            return;
+        }
+
+        try {
+            const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+            const address = accounts[0];
+
+            const messageRes = await fetch('/auth/message', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ address })
+            });
+            const { message } = await messageRes.json();
+
+            const signature = await ethereum.request({
+                method: 'personal_sign',
+                params: [message, address],
+            });
+
+            const verifyRes = await fetch('/auth/verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ address, signature })
+            });
+
+            if (verifyRes.ok) {
+                window.location.href = '/dashboard';
+            } else {
+                alert('MetaMask authentication failed!');
+            }
+        } catch (error) {
+            console.error('MetaMask login error:', error);
+            alert('Error connecting with MetaMask');
+        }
+    });
+</script>
+
 
                     <script src="/js/authPage.js"></script>
+                    <script>
+                        document.getElementById('signInForm').addEventListener('submit', async (event) => {
+                            event.preventDefault(); // Stop normal form submit first
+                        
+                            if (typeof window.ethereum === 'undefined') {
+                                alert('MetaMask is not installed!');
+                                return;
+                            }
+                        
+                            try {
+                                const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+                                const address = accounts[0];
+                        
+                                const messageRes = await fetch('/auth/message', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ address })
+                                });
+                                const { message } = await messageRes.json();
+                        
+                                const signature = await ethereum.request({
+                                    method: 'personal_sign',
+                                    params: [message, address],
+                                });
+                        
+                                const verifyRes = await fetch('/auth/verify', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ address, signature })
+                                });
+                        
+                                if (verifyRes.ok) {
+                                    // MetaMask verified successfully
+                                    event.target.submit(); // Now actually submit the email-password form
+                                } else {
+                                    alert('MetaMask authentication failed!');
+                                }
+                            } catch (error) {
+                                console.error('MetaMask login error:', error);
+                                alert('Error connecting with MetaMask');
+                            }
+                        });
+                        </script>
+                        
                     <script>
                         setTimeout(() => {
                             const alertElem = document.querySelector('.alert');

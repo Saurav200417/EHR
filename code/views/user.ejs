@@ -1,0 +1,46 @@
+<!-- user.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Patient Dashboard</h1>
+            <div class="user-info">
+                <p>Welcome, <%= username %>
+                </p>
+                <a href="/logout" class="btn">Logout</a>
+            </div>
+        </header>
+
+        <% if (locals.success && success.length> 0) { %>
+            <div class="alert alert-success">
+                <%= success %>
+            </div>
+            <% } %>
+
+                <% if (locals.error && error.length> 0) { %>
+                    <div class="alert alert-danger">
+                        <%= error %>
+                    </div>
+                    <% } %>
+
+                        <div class="dashboard-content">
+                            <h2>User Dashboard</h2>
+                            <p>This is the regular user dashboard. You are logged in as a patient.</p>
+                        </div>
+
+                        <footer>
+                            <p>&copy; <%= new Date().getFullYear() %> EHR System</p>
+                        </footer>
+    </div>
+</body>
+
+</html>

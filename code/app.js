@@ -10,7 +10,7 @@ const jwt = require('jsonwebtoken');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const flash = require('connect-flash');
-const db = "mongodb://127.0.0.1:27017/FlowLearn"
+const db = "mongodb://127.0.0.1:27017/EHR"
 const port = process.env.PORT || 3000;
 
 // mongoose connection
@@ -158,39 +158,155 @@ app.post('/register', async (req, res) => {
 
         req.flash('success', 'Registration successful!');
         // Set the token as a cookie and redirect
-        res.cookie('token', token, { httpOnly: true }).redirect('/dashboard');
+        res.cookie('token', token, { httpOnly: true }).redirect('/admin');
     } catch (err) {
         req.flash('error', 'Registration failed. Please try again.');
         res.redirect('/auth?error=Registration failed');
         console.log(err)
     }
 });
+// const express = require('express');
+// const jwt = require('jsonwebtoken');
+// const app = express();
 
+// Example users array
+const users = [
+    { id: 1, username: 'admin', password: 'admin', role: 'admin' },
+    { id: 2, username: 'user', password: 'user', role: 'user' }
+];
+
+// Login route - authenticate user and issue token
 app.post('/login', async (req, res) => {
     try {
-        const { email, password } = req.body;
-        const user = await User.findOne({ email: email });
+        const { username, password } = req.body;
+
+        // 1. Verify credentials
+        const user = users.find(u => u.username === username && u.password === password);
         if (!user) {
-            req.flash('error', 'Invalid username or Invalid password');
-            return res.redirect('/auth?error=Invalid username or Invalid password');
+            req.flash('error', 'Invalid username or password');
+            return res.redirect('/auth?error=Invalid credentials');
         }
 
-        const validPass = await bcrypt.compare(password, user.password);
-        if (!validPass) {
-            req.flash('error', 'Invalid username or Invalid password');
-            return res.redirect('/auth?error=Invalid username or Invalid password');
-        }
+        // 2. Generate JWT token with user ID and role
+        const token = jwt.sign(
+            {
+                sub: user.id,
+                role: user.role
+            },
+            'your_jwt_secret',
+            { expiresIn: '24h' }
+        );
 
-        const token = generateToken(user);
-        req.flash('success', 'Login successful!');
-        res.cookie('token', token, { httpOnly: true }).redirect('/dashboard');
+        // 3. Set token in cookie
+        res.cookie('token', token, { httpOnly: true });
+
+        // 4. Redirect based on role
+        if (user.role === 'admin') {
+            req.flash('success', 'Welcome, Admin!');
+            return res.redirect('/admin');
+        } else {
+            req.flash('success', 'Login successful!');
+            return res.redirect('/user');
+        }
     } catch (err) {
+        console.error('Login error:', err);
+        req.flash('error', 'Authentication failed');
         res.redirect('/auth?error=auth failed');
-        console.log(err);
     }
 });
 
+// Authentication middleware
+const authenticate = (req, res, next) => {
+    try {
+        // Get token from cookie or Authorization header
+        const token = req.cookies?.token ||
+            (req.headers['authorization'] && req.headers['authorization'].startsWith('Bearer ')
+                ? req.headers['authorization'].substring(7) : null);
 
+        if (!token) {
+            req.flash('error', 'Please login to continue');
+            return res.redirect('/auth');
+        }
+
+        // Verify token
+        jwt.verify(token, 'your_jwt_secret', (err, decoded) => {
+            if (err) {
+                req.flash('error', 'Session expired. Please login again');
+                return res.redirect('/auth');
+            }
+
+            // Add user data to request
+            req.user = decoded;
+            next();
+        });
+    } catch (err) {
+        console.error('Authentication error:', err);
+        req.flash('error', 'Authentication failed');
+        res.redirect('/auth');
+    }
+};
+
+// Authorization middleware
+const authorize = (roles) => (req, res, next) => {
+    try {
+        if (!req.user) {
+            req.flash('error', 'Please login to continue');
+            return res.redirect('/auth');
+        }
+
+        if (!roles.includes(req.user.role)) {
+            req.flash('error', 'Access denied. Insufficient permissions');
+
+            // Redirect to appropriate dashboard based on user's role
+            if (req.user.role === 'admin') {
+                return res.redirect('/admin');
+            } else {
+                return res.redirect('/user');
+            }
+        }
+
+        next();
+    } catch (err) {
+        console.error('Authorization error:', err);
+        req.flash('error', 'Authorization failed');
+        res.redirect('/auth');
+    }
+};
+
+// Admin route - renders admin.ejs template
+app.get('/admin', authenticate, authorize(['admin']), (req, res) => {
+    // You might want to fetch additional data for the admin dashboard here
+    const adminData = {
+        title: 'Admin Dashboard',
+        user: {
+            id: req.user.sub,
+            role: req.user.role
+        }
+        // Add any other data you want to pass to the template
+    };
+
+    res.render('admin', adminData);
+});
+
+// User route - renders user.ejs template
+app.get('/user', authenticate, authorize(['user']), (req, res) => {
+    // You might want to fetch specific user data here
+    const userData = {
+        title: 'User Dashboard',
+        user: {
+            id: req.user.sub,
+            role: req.user.role
+        }
+        // Add any other data you want to pass to the template
+    };
+
+    res.render('user', userData);
+});
+
+// // Authentication page route
+// app.get('/auth', (req, res) => {
+//     res.render('auth', { title: 'Login' });
+// });
 
 app.get('/logout', (req, res) => {
     req.flash('error', 'You have been logged out');
@@ -204,5 +320,5 @@ app.use((req, res) => {
 
 // Start the server
 app.listen(port, () => {
-    console.log(`Study Planner app listening at http://localhost:${port}`);
+    console.log(`listening at http://localhost:${port}`);
 });
